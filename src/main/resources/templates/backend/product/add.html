@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="backend/fragments/head :: head">
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+	<!-- Site wrapper -->
+	<div class="wrapper">
+
+		<div th:replace="backend/fragments/header :: header"></div>
+
+		<!-- Left side column. contains the sidebar -->
+		<div th:replace="~{backend/fragments/sidebar :: sidebar}"></div>
+		<!-- =============================================== -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+					<li><a href="#">Examples</a></li>
+					<li class="active">Blank page</li>
+				</ol>
+			</section>
+
+			<!-- Main content -->
+			<div class="col-md-6">
+				<section class="content">
+					<div class="box box-primary">
+						<form role="form" method="post"
+							th:action="@{/backend/product-add}" th:object="${product}"
+							enctype="multipart/form-data">
+							<div class="box-body">
+
+								<!-- Product Name -->
+								<div class="form-group">
+									<label for="productName">Product Name</label> <input
+										type="text" class="form-control" id="productName"
+										th:field="*{productName}" placeholder="Enter product name">
+								</div>
+
+								<!-- Price -->
+								<div class="form-group">
+									<label for="price">Price</label> <input type="text"
+										class="form-control" id="price" th:field="*{price}"
+										placeholder="Enter price">
+								</div>
+
+								<!-- Image -->
+								<div class="form-group">
+									<label for="fileImage">Image</label> <input type="file"
+										class="form-control" id="fileImage" name="fileImage">
+								</div>
+
+								<!-- Category -->
+								<div class="form-group" data-select2-id="13">
+									<label for="category">Category</label> <select
+										class="form-control select2 select2-hidden-accessible"
+										id="category" th:field="*{category.id}" style="width: 100%;">
+										<option th:each="category : ${listCate}"
+											th:value="${category.id}" th:text="${category.categoryName}"></option>
+									</select>
+								</div>
+
+								<!-- Color -->
+								<div class="form-group">
+									<label for="color">Color</label> <input type="text"
+										class="form-control" id="color" th:field="*{color}"
+										placeholder="Enter color">
+								</div>
+
+								<!-- Size -->
+								<div class="form-group">
+									<label for="size">Size</label> <input type="text"
+										class="form-control" id="size" th:field="*{size}"
+										placeholder="Enter size">
+								</div>
+
+								<!-- Description -->
+								<div class="form-group">
+									<label for="editor1">Description</label>
+									<textarea name="editor1" id="editor1" rows="10" cols="80"
+										th:field="*{description}">
+						                Thêm thông tin sản phẩm.
+						            </textarea>
+								</div>
+
+							</div>
+
+							<!-- Submit Button -->
+							<div class="box-footer">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</form>
+
+					</div>
+				</section>
+
+			</div>
+			<!-- /.content -->
+		</div>
+
+		<!-- /.content-wrapper -->
+		<div th:replace="~{backend/fragments/footer :: footer}"></div>
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- jQuery 3 -->
+	<div th:replace="~{backend/fragments/script :: script}"></div>
+	<script th:src="@{//cdn.ckeditor.com/4.22.1/standard/ckeditor.js}"></script>
+	<script>
+		CKEDITOR.replace('editor1', {
+			width : '100%',
+			height : '150px' // Bạn có thể điều chỉnh chiều cao ở đây
+		});
+	</script>
+
+</body>
+</html>
