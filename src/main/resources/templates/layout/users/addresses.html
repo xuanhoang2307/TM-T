@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/fragments/head :: head">
+<meta charset="UTF-8">
+</head>
+<style type="text/css">
+    .css_select_div {
+        text-align: center;
+    }
+
+    .css_select {
+        display: inline-table;
+        width: 25%;
+        padding: 5px;
+        margin: 5px 2%;
+        border: solid 1px #686868;
+        border-radius: 5px;
+    }
+</style>
+<body>
+	<div class="page-wrapper">
+		<header th:replace="layout/fragments/header :: header"></header>
+		<main class="main">
+			<div class="page-header text-center"
+				style="background-image: url('/fontend/images/page-header-bg.jpg')">
+				<div class="container">
+					<h1 class="page-title">My Profile</h1>
+				</div>
+				<!-- End .container -->
+			</div>
+			<!-- End .page-header -->
+			<nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+				<div class="container">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+						<li class="breadcrumb-item"><a th:href="@{/home/dashboard}">Shop</a></li>
+						<li class="breadcrumb-item active" aria-current="page">My
+							Profile</li>
+					</ol>
+				</div>
+				<!-- End .container -->
+			</nav>
+			<!-- End .breadcrumb-nav -->
+
+			<div class="page-content">
+				<div class="dashboard">
+					<div class="container">
+						<div class="row">
+							<div th:replace="layout/fragments/sidebar :: sidebar"></div>
+							<div class="col-md-8 col-lg-9">
+								<div class="tab-content">
+									<div th:if="${message}">
+			                            <p th:text="${message}" class="alert alert-info"></p>
+			                        </div>
+									<div th:if="${#lists.size(addresses) > 0}" th:each="address : ${addresses}">
+										<p th:text="'Tên người nhận: ' + ${address.recipientName}"></p>
+										<p
+											th:text="'Địa chỉ: ' + ${address.streetAddress} + ', ' + ${address.ward} + ', ' + ${address.district} + ', ' + ${address.city}"></p>
+										<button th:if="${!address.isDefault}" 
+										th:onclick="'setDefaultAddress(' + ${address.id} + ')'">
+											Đặt làm mặc định</button>
+										<button th:onclick="editAddress(${address.id})">
+										Chỉnh sửa</button>
+										<button th:onclick="'deleteAddress(' + ${address.id} + ')'">
+										    Xóa
+										</button>
+									</div>
+									<button type="button" onclick="showAddAddressForm()">
+									Thêm địa chỉ</button>
+
+									<div id="add-address-form" style="display: none;">
+										<div class="col-lg-6">
+										<h3>Thêm địa chỉ mới</h3>
+										<form id="addressForm">
+											<label for="recipientName">Tên người nhận:</label> 
+											<input class="form-control"
+												type="text" id="recipientName" name="recipientName" required>
+											
+											<label for="phoneNumber">Số điện thoại:</label> 
+											<input class="form-control"
+												type="text" id="phoneNumber" name="phoneNumber" required>
+											
+											<div class="row" style="display: flex; flex-wrap: nowrap;">
+												<select class="css_select" id="tinh" name="city"
+													style="flex: 1;" title="Chọn Tỉnh Thành" required>
+													<option value="">Chọn Tỉnh Thành</option>
+												</select> <input type="hidden" id="cityFullName" name="cityFullName">
+											</div>
+											<!-- End .row -->
+											<div class="row" style="display: flex; flex-wrap: nowrap;">
+												<select class="css_select" id="quan" name="district"
+													style="flex: 1;" title="Chọn Quận Huyện" required>
+													<option value="">Chọn Quận Huyện</option>
+												</select> <input type="hidden" id="districtFullName"
+													name="districtFullName">
+											</div>
+											<!-- End .row -->
+											<div class="row" style="display: flex; flex-wrap: nowrap;">
+												<select class="css_select" id="phuong" name="ward"
+													style="flex: 1;" title="Chọn Phường Xã" required>
+													<option value="">Chọn Phường Xã</option>
+												</select> <input type="hidden" id="wardFullName" name="wardFullName">
+											</div>
+											<!-- End .row -->
+											<label for="register-street">Street address</label> <input
+												type="text" class="form-control" id="register-street"
+												name="streetAddress"
+												placeholder="House number and Street name" required>
+											<label for="isDefault">Đặt làm mặc định:</label> 
+											<input type="checkbox" id="isDefault" name="isDefault"> <br>
+											<button type="submit">Lưu địa chỉ</button>
+											<button type="button" onclick="cancelAdd()">Hủy</button>
+										</form>
+									</div>
+								</div>
+								</div>
+							</div>
+							<!-- End .col-lg-9 -->
+						</div>
+						<!-- End .row -->
+					</div>
+					<!-- End .container -->
+				</div>
+				<!-- End .dashboard -->
+			</div>
+			<!-- End .page-content -->
+		</main>
+		<!-- End .main -->
+		<div th:replace="layout/fragments/footer :: footer"></div>
+	</div>
+	<div th:replace="layout/fragments/script :: script"></div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://esgoo.net/scripts/jquery.js"></script>
+<script>
+function showAddAddressForm() {
+    document.getElementById("add-address-form").style.display = "block";
+}
+function setDefaultAddress(addressId) {
+    axios.put(`/home/addresses/setdefault/${addressId}`)
+        .then(response => {
+            console.log("Địa chỉ đã được đặt làm mặc định");
+            location.reload();
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+function deleteAddress(addressId) {
+    if (!addressId) {
+        console.error("addressId không hợp lệ:", addressId);
+        return;
+    }
+    axios.delete(`/home/addresses/deleteadd/${addressId}`)
+        .then(response => {
+            console.log("Địa chỉ đã được xóa");
+            location.reload();
+        })
+        .catch(error => {
+            console.error("Lỗi khi xóa địa chỉ:", error);
+        });
+}
+
+
+$(document).ready(function () {
+    // Kiểm tra các trường bắt buộc khi gửi form
+    $("form").submit(function (event) {
+        if ($("#tinh").val() === "" || $("#quan").val() === "" || $("#phuong").val() === "" || $("#register-street").val() === "") {
+            alert("Vui lòng điền đầy đủ thông tin địa chỉ.");
+            event.preventDefault();  // Ngừng gửi form nếu có trường chưa được điền
+        }
+    });
+    // Lấy danh sách tỉnh thành
+    $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data_tinh) {
+        if (data_tinh.error == 0) {
+            $.each(data_tinh.data, function (key_tinh, val_tinh) {
+                $("#tinh").append('<option value="' + val_tinh.id + '">' + val_tinh.full_name + '</option>');
+            });
+            // Lắng nghe sự kiện thay đổi tỉnh
+            $("#tinh").change(function () {
+                var idtinh = $(this).val(); // Lưu ID của tỉnh
+                var nameTinh = $("#tinh option:selected").text(); // Lấy tên đầy đủ của tỉnh
+                $("#cityFullName").val(nameTinh); // Cập nhật trường ẩn với tên tỉnh
+                // Lấy danh sách quận huyện
+                loadDistricts(idtinh);
+            });
+        }
+    });
+    // Hàm lấy danh sách quận huyện
+    function loadDistricts(idtinh) {
+        $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function (data_quan) {
+            if (data_quan.error == 0) {
+                $("#quan").html('<option value="0">Chọn Quận Huyện</option>');
+                $("#phuong").html('<option value="0">Chọn Phường Xã</option>');  // Reset phường xã
+
+                $.each(data_quan.data, function (key_quan, val_quan) {
+                    $("#quan").append('<option value="' + val_quan.id + '">' + val_quan.full_name + '</option>');
+                });
+
+                // Lắng nghe sự kiện thay đổi quận
+                $("#quan").change(function () {
+                    var idquan = $(this).val(); // Lưu ID của quận
+                    var nameQuan = $("#quan option:selected").text(); // Lấy tên đầy đủ của quận
+                    $("#districtFullName").val(nameQuan); // Cập nhật trường ẩn với tên quận
+                    // Lấy danh sách phường xã
+                    loadWards(idquan);
+                });
+            }
+        });
+    }
+    // Hàm lấy danh sách phường xã
+    function loadWards(idquan) {
+        $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function (data_phuong) {
+            if (data_phuong.error == 0) {
+                $("#phuong").html('<option value="0">Chọn Phường Xã</option>');
+                $.each(data_phuong.data, function (key_phuong, val_phuong) {
+                    $("#phuong").append('<option value="' + val_phuong.id + '">' + val_phuong.full_name + '</option>');
+                });
+                // Lắng nghe sự kiện thay đổi phường xã
+                $("#phuong").change(function () {
+                    var idphuong = $(this).val(); // Lưu ID của phường
+                    var namePhuong = $("#phuong option:selected").text(); // Lấy tên đầy đủ của phường
+                    $("#wardFullName").val(namePhuong); // Cập nhật trường ẩn với tên phường
+                });
+            }
+        });
+    }
+	
+    // Hàm thêm địa chỉ vào hệ thống
+    function addAddress() {
+    	const isDefault = document.getElementById('isDefault').checked;
+        const addressData = {
+            recipientName: document.getElementById("recipientName").value,
+            phoneNumber: document.getElementById("phoneNumber").value,
+            streetAddress: document.getElementById("register-street").value,
+            ward: $("#phuong option:selected").text(),  // Lấy tên phường
+            district: $("#quan option:selected").text(),  // Lấy tên quận
+            city: $("#tinh option:selected").text(),  // Lấy tên tỉnh
+            isDefault: isDefault
+        };
+        // Gửi yêu cầu POST tới API để thêm địa chỉ
+        axios.post('/home/addresses', addressData)
+            .then(response => {
+            	console.log("Địa chỉ đã được thêm", response.data);
+            	location.reload(); 
+            })
+            .catch(error => {
+                console.error(error);
+            });      
+    }
+
+    // Ngừng hành động mặc định của form khi submit
+    document.getElementById("addressForm").addEventListener('submit', function(event) {
+        event.preventDefault(); // Ngừng hành động mặc định của form
+        addAddress(); // Gọi hàm thêm địa chỉ khi người dùng submit form
+    });
+
+    // Hàm hủy thêm địa chỉ và ẩn form
+    function cancelAdd() {
+        // Ẩn form thêm địa chỉ
+        document.getElementById("add-address-form").style.display = "none";
+        document.getElementById("addressForm").reset();
+    }
+});
+
+</script>
+</body>
+</html>

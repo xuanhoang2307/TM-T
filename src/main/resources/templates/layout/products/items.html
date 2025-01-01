@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layout/fragments/head :: head"></head>
+<style>
+.wishlist.active {
+	color: red;
+}
+
+.btn-wishlist .icon-heart {
+	font-size: 20px;
+	transition: color 0.3s ease;
+}
+.review-comment {
+    margin-top: 20px; /* Tạo khoảng cách giữa phần tên và nội dung comment */
+}
+
+
+</style>
+
+<body>
+	<div class="page-wrapper">
+		<header th:replace="layout/fragments/header :: header"></header>
+		<main class="main">
+			<nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+				<div class="container d-flex align-items-center">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+						<li class="breadcrumb-item"><a th:href="@{/home/products}">Products</a></li>
+					</ol>
+				</div>
+				<!-- End .container -->
+			</nav>
+			<!-- End .breadcrumb-nav -->
+
+			<div class="page-content">
+				<div class="container">
+					<div class="product-details-top">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="product-gallery product-gallery-vertical">
+									<div class="row">
+										<figure class="product-main-image">
+											<img id="product-zoom"
+												th:src="@{'/uploads/'+${product.image}}" alt="product image">
+
+											<a href="#" id="btn-product-gallery"
+												class="btn-product-gallery"> <i class="icon-arrows"></i>
+											</a>
+										</figure>
+										<!-- End .product-main-image -->
+									</div>
+									<!-- End .row -->
+								</div>
+								<!-- End .product-gallery -->
+							</div>
+							<!-- End .col-md-6 -->
+							<div class="col-md-6">
+								<div class="product-details">
+									<h1 th:text="${product.productName}" class="product-title"></h1>
+									<!-- End .product-title -->
+
+									<div class="ratings-container">
+										<div class="ratings">
+											<div class="ratings-val"
+											th:style="'width: ' + (${product.averageRating} * 20) + '%;'"></div>
+											<!-- End .ratings-val -->
+										</div>
+										<!-- End .ratings -->
+										<a class="ratings-text" href="#product-review-link"
+											id="review-link"></a>
+									</div>
+									<!-- End .rating-container -->
+
+									<div class="product-price">
+										<span th:text="${product.price} + '  Nghìn VND'"></span>
+									</div>
+									<!-- End .product-price -->
+
+									<div class="product-content">
+										<p
+											th:text="${product.content != null ? product.content : 'Chưa có thông tin chi tiết cho sản phẩm này.'}">
+										</p>
+									</div>
+									<!-- End .product-content -->
+
+									<div class="details-filter-row details-row-size">
+										<label>Color:</label>
+										<div class="product-nav product-nav-thumbs">
+											<a th:text="${product.color}"> </a>
+
+										</div>
+										<!-- End .product-nav -->
+									</div>
+									<!-- End .details-filter-row -->
+
+									<form th:action="@{/home/cart/add}" method="post"
+										class="add-to-cart-form">
+										<input type="hidden" name="productId" th:value="${product.id}" />
+
+										<div class="details-filter-row details-row-size">
+											<label for="size">Size:</label>
+											<div class="select-custom">
+												<select name="size" id="size" class="form-control"
+													style="padding: 0; width: 80px;">
+													<option value="" disabled selected>Chọn Size</option>
+													<th:block th:each="size : ${product.sizes}">
+														<option th:value="${size.id}" th:text="${size.name}"></option>
+													</th:block>
+												</select>
+											</div>
+											<!-- End .select-custom -->
+											<div id="size-error"
+												style="color: red; font-size: 14px; display: none;">
+												Vui lòng chọn size trước khi thêm vào giỏ hàng.</div>
+										</div>
+										<!-- End .details-filter-row -->
+
+										<div class="details-filter-row details-row-size">
+											<label for="qty">Qty:</label>
+											<div class="product-details-quantity">
+												<input type="number" name="quantity" id="qty"
+													class="form-control" value="1" min="1" max="10" step="1"
+													data-decimals="0" required>
+											</div>
+											<!-- End .product-details-quantity -->
+										</div>
+										<!-- End .details-filter-row -->
+
+										<div class="product-details-action">
+											<!-- Form add to cart -->
+											<button type="submit" class="btn-product btn-cart">
+												<span>Add to cart</span>
+											</button>
+										</div>
+										<!-- End .product-details-action -->
+										<div id="success-message" style="display: none;"></div>
+									</form>
+									<div class="product-details-footer">
+										<div class="details-action-wrapper">
+											<a href="javascript:void(0);" id="wishlist-btn"
+												class="btn-product wishlist" title="Wishlist"
+												th:data-product-id="${product.id}"
+												th:data-in-wishlist="${inWishlist}"
+												th:classappend="${inWishlist} ? 'active' : ''"
+												onclick="toggleWishlist(this)"> <i class="icon-heart"></i>
+												<span>Add to Wishlist</span></a>
+										</div>
+										<!-- End .details-action-wrapper -->
+									</div>
+									<!-- End .product-details-footer -->
+								</div>
+								<!-- End .product-details -->
+							</div>
+							<!-- End .col-md-6 -->
+						</div>
+						<!-- End .row -->
+					</div>
+					<!-- End .product-details-top -->
+
+					<div class="product-details-tab">
+						<ul class="nav nav-pills justify-content-center" role="tablist">
+
+							<li class="nav-item"><a class="nav-link active"
+								id="product-info-link" data-toggle="tab"
+								href="#product-info-tab" role="tab"
+								aria-controls="product-info-tab" aria-selected="true">Description</a>
+							</li>
+
+							<li class="nav-item"><a class="nav-link"
+								id="product-review-link" data-toggle="tab"
+								href="#product-review-tab" role="tab"
+								aria-controls="product-review-tab" aria-selected="false">Reviews</a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane fade show active" id="product-desc-tab"
+								role="tabpanel" aria-labelledby="product-desc-link">
+								<div class="product-desc-content">
+									<h3 th:utext="${product.description}"></h3>
+
+								</div>
+								<!-- End .product-desc-content -->
+							</div>
+							<!-- .End .tab-pane -->
+							<div class="tab-pane fade" id="product-info-tab" role="tabpanel"
+								aria-labelledby="product-info-link">
+								<div class="product-desc-content">
+									<h3 th:utext="${product.description}"></h3>
+
+								</div>
+								<!-- End .product-desc-content -->
+							</div>
+							<!-- .End .tab-pane -->
+
+							<div class="tab-pane fade" id="product-review-tab"
+								role="tabpanel" aria-labelledby="product-review-link">
+								<div class="reviews">
+									<h3>Đánh giá sản phẩm</h3>
+									<div th:if="${reviews != null && !reviews.isEmpty()}">
+										<div th:each="review : ${reviews}" class="review">
+											<div class="row no-gutters">
+												<div class="col-auto">
+													<h4>
+														<a th:text="${review.user?.userName ?: 'Anonymous'}">User Name</a>
+													</h4>
+													<div class="ratings-container">
+														<div class="ratings">
+															<div class="ratings-val"
+																th:style="'width: ' + (${review.rating} * 20) + '%;'"></div>
+															<!-- Hiển thị số sao, 20% tương ứng với 1 sao -->
+														</div>
+														<!-- End .ratings -->
+													</div>
+													<!-- End .ratings-container -->
+													<span class="review-date"
+														th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">Ngày
+														đánh giá</span>
+												</div>
+												<!-- End .col-auto -->
+												<div class="col">
+													<div class="review-content">
+														<p th:text="${review.comment}" class="review-comment"></p>
+													</div>
+												</div>
+												<!-- End .col -->
+											</div>
+											<!-- End .row -->
+										</div>
+										<!-- End .review -->
+									</div>
+									<div th:if="${reviews == null || reviews.isEmpty()}">
+										<p>Chưa có đánh giá nào cho sản phẩm này.</p>
+									</div>
+								</div>
+								<!-- End .reviews -->
+							</div>
+							<!-- End .tab-pane -->
+
+						</div>
+						<!-- End .tab-content -->
+					</div>
+					<!-- End .product-details-tab -->
+
+					<h2 class="title text-center mb-4">You May Also Like</h2>
+					<!-- End .title text-center -->
+
+				</div>
+				<!-- End .container -->
+			</div>
+			<!-- End .page-content -->
+		</main>
+		<!-- End .main -->
+
+		<div th:replace="layout/fragments/footer :: footer"></div>
+	</div>
+	<!-- End .page-wrapper -->
+	<div th:replace="layout/fragments/script :: script"></div>
+	<script>
+    // Lắng nghe sự kiện submit form thêm sản phẩm vào giỏ hàng
+    document.querySelectorAll('.add-to-cart-form').forEach(form => {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Ngừng hành động mặc định của form
+
+            const formData = new FormData(form);
+            const size = formData.get('size'); // Lấy giá trị size từ form
+            const errorDiv = form.querySelector('#size-error'); // Lấy thông báo lỗi tương ứng với form
+
+            // Kiểm tra nếu size chưa được chọn
+            if (!size) {
+                errorDiv.style.display = 'block'; // Hiển thị thông báo lỗi
+                return; // Dừng không gửi request
+            } else {
+                errorDiv.style.display = 'none'; // Ẩn thông báo lỗi nếu size hợp lệ
+            }
+
+            // Tiếp tục gửi yêu cầu AJAX để thêm vào giỏ hàng
+            fetch('/home/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(formData).toString(), // Gửi size cùng các dữ liệu khác
+            })
+            .then(response => response.text())
+            .then(message => {
+                // Hiển thị thông báo thành công
+                const successMessageDiv = form.querySelector(`#success-message`);
+                successMessageDiv.style.display = 'block';
+                successMessageDiv.innerText = "Sản phẩm đã được thêm vào giỏ hàng.";
+
+                // Ẩn thông báo sau vài giây
+                setTimeout(() => {
+                    successMessageDiv.style.display = 'none';
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra, vui lòng thử lại.');
+            });
+        });
+    });
+    
+function toggleWishlist(element) {
+        const productId = element.getAttribute("data-product-id");
+        const inWishlist = element.getAttribute("data-in-wishlist") === "true";
+
+        if (inWishlist) {
+            // Xóa khỏi wishlist
+            fetch(`/home/wish-list/remove?productId=${productId}`, {
+                method: "DELETE",
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        element.classList.remove("active");
+                        element.setAttribute("data-in-wishlist", "false");
+                    } else {
+                        alert("Có lỗi xảy ra khi xóa sản phẩm khỏi wishlist!");
+                    }
+                })
+                .catch(() => alert("Không thể kết nối với máy chủ!"));
+        } else {
+            // Thêm vào wishlist
+            fetch(`/home/wish-list/add?productId=${productId}`, {
+                method: "POST",
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        element.classList.add("active");
+                        element.setAttribute("data-in-wishlist", "true");
+                    } else {
+                        alert("Có lỗi xảy ra khi thêm sản phẩm vào wishlist!");
+                    }
+                })
+                .catch(() => alert("Không thể kết nối với máy chủ!"));
+        }
+    }    
+</script>
+
+</body>
+</html>

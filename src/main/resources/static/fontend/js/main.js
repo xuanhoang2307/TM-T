@@ -165,8 +165,6 @@ $(document).ready(function () {
     if ( typeof noUiSlider === 'object' ) {
 		var priceSlider  = document.getElementById('price-slider');
 
-		// Check if #price-slider elem is exists if not return
-		// to prevent error logs
 		if (priceSlider == null) return;
 
 		noUiSlider.create(priceSlider, {
@@ -185,8 +183,9 @@ $(document).ready(function () {
 		    })
 		});
 
-		// Update Price Range
 		priceSlider.noUiSlider.on('update', function( values, handle ){
+			document.getElementById('minPrice').value = values[0].replace('$', ''); // Loại bỏ dấu '$'
+        	document.getElementById('maxPrice').value = values[1].replace('$', '');
 			$('#filter-price-range').text(values.join(' - '));
 		});
 	}

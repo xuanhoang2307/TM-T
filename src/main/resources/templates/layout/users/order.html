@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/fragments/head :: head">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css">
+    <style>
+        .order-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .order-item .order-info {
+            font-weight: bold;
+        }
+        .order-status {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+	<div class="page-wrapper">
+		<header th:replace="layout/fragments/header :: header"></header>
+		<main class="main">
+        	<div class="page-header text-center" style="background-image: url('/fontend/images/page-header-bg.jpg')">
+        		<div class="container">
+        			<h1 class="page-title">My Profile</h1>
+        		</div><!-- End .container -->
+        	</div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/home/products}">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">My Profile</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+            	<div class="dashboard">
+	                <div class="container">
+	                	<div class="row">
+	                		<div th:replace="layout/fragments/sidebar :: sidebar"></div>
+
+	                		<div class="col-md-8 col-lg-9">
+	                			<div class="tab-content">
+                                    <div th:each="order : ${orders}" class="order-item">
+						            <div class="order-info">
+						                <p>Mã đơn hàng: <span th:text="${order.orderid}">Order ID</span></p>
+						                <p>Ngày đặt hàng: <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Order Date</span></p>
+						                <p>Ngày giao hàng dự kiến: <span th:text="${#dates.format(order.deliveryDate, 'dd/MM/yyyy')}">Delivery Date</span></p>
+						                <p>Số lượng món: <span th:text="${order.totalItem}">Total Items</span></p>
+						                <p>Tổng giá trị: <span th:text="${order.totalPrice}">Total Price</span></p>
+						            </div>
+						            <div class="order-status">
+						                <p>Trạng thái: <span th:text="${order.orderStatus}">Order Status</span></p>
+						            </div>
+						        </div>
+								</div>
+	                		</div><!-- End .col-lg-9 -->
+	                	</div><!-- End .row -->
+	                </div><!-- End .container -->
+                </div><!-- End .dashboard -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->	
+        <div th:replace="layout/fragments/footer :: footer"></div>	
+	</div>
+	<div th:replace="layout/fragments/script :: script"></div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

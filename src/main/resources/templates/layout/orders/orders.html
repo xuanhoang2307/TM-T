@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments/head :: head}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <!-- Link CSS Bootstrap -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    .btn-xs { 
+        width: auto;
+        min-width: 50px;
+    }
+    .custom-link {
+        font-size: 1.8rem; /* Tăng kích thước chữ */
+        text-decoration: none; /* Loại bỏ gạch chân */
+    }
+    .custom-link:hover {
+        color: #007bff; /* Màu khi hover */
+        text-decoration: underline; /* Thêm gạch chân khi hover */
+    }
+</style>
+<body>
+<div class="page-wrapper">
+	<header th:replace="~{layout/fragments/header :: header}"></header>
+	<main class="main">        	
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/home/products}">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+    		
+			<div class="page-content">
+				<div class="cart">
+					<div class="container">
+						<div class="container my-5">
+					        <h2 class="text-center mb-4">My Orders</h2>
+					        <div class="table-responsive">
+					            <table class="table table-bordered table-striped text-center">
+					                <thead class="table-dark">
+					                    <tr>
+								            <th>Mã đơn hàng</th>
+								            <th>Ngày đặt hàng</th>
+								            <th>Tổng giá</th>
+								            <th>Trạng thái</th>
+								            <th>Chi tiết</th>
+								        </tr>
+					                </thead>
+					                <tbody>
+									    <tr th:each="order : ${orders}">
+									        <td th:text="${order.id}"></td>
+									        <td th:text="${order.orderDate}"></td>
+									        <td th:text="${order.totalDiscountedPrice}"></td>
+									        <td th:text="${order.orderStatus}"></td>
+									        <td>
+									            <a th:href="@{/home/orders/orderitems/{id}(id=${order.id})}" class="custom-link">
+									            Xem chi tiết</a>
+									        	<button type="button" 
+									                    class="btn btn-danger btn-sm btn-xs"
+									                    th:if="${order.orderStatus == 'Đang chờ'}"
+									                    th:onclick="'cancelOrder(' + ${order.id} + ')'">
+									             Hủy đơn</button>
+									        </td>
+									        
+									    </tr>
+									</tbody>
+					            </table>
+					        </div>
+							        <!-- Phân trang -->
+							        <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-4">
+									    <ul class="pagination">
+									        <li class="page-item" th:if="${currentPage > 0}">
+									            <a class="page-link" th:href="@{/home/orders(page=${currentPage - 1})}">&laquo;</a>
+									        </li>
+									        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage ? ' active' : ''}">
+									            <a class="page-link" th:href="@{/home/orders(page=${i})}" th:text="${i + 1}"></a>
+									        </li>
+									        <li class="page-item" th:if="${currentPage < totalPages - 1}">
+									            <a class="page-link" th:href="@{/home/orders(page=${currentPage + 1})}">&raquo;</a>
+									        </li>
+									    </ul>
+									</nav>
+							    </div>
+						</div>
+					</div>
+			 </div>
+	</main>
+</div>
+<div th:replace="~{layout/fragments/script :: script}"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function cancelOrder(orderId) {
+        if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+            fetch(`/home/orders/cancel/${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Đơn hàng đã được hủy thành công!');
+                    location.reload(); // Reload lại trang sau khi hủy đơn
+                } else {
+                    alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
+                }
+            })
+            .catch(error => {
+                console.error('Có lỗi xảy ra:', error);
+                alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

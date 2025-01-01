@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/head :: head"></head>
+<body class="hold-transition skin-blue sidebar-mini">
+	<!-- Site wrapper -->
+	<div class="wrapper">
+
+		<div th:replace="admin/fragments/header :: header"></div>
+
+		<!-- Left side column. contains the sidebar -->
+		<div th:replace="admin/fragments/sidebar :: sidebar"></div>
+		<!-- =============================================== -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<ol class="breadcrumb">
+					<li><a th:href="@{/admin/}"><i class="fa fa-dashboard"></i> Home</a></li>
+					<li><a th:href="@{/admin/product/}">Product</a></li>
+				</ol>
+			</section>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="box">
+					<div class="box-header with-border">
+						<h3 class="box-title">Danh sách sản phẩm</h3>
+					</div>
+					<div class="box-body">
+						<form>
+							<div class="box-tools">
+								<div class="input-group input-group-sm hidden-xs"
+									style="width: 150px;">
+									<input type="text" name="keywordP"
+										class="form-control pull-right" placeholder="Search"
+										th:value="${keywordP}">
+									<div class="input-group-btn">
+										<button type="submit" class="btn btn-default">
+											<i class="fa fa-search"></i>
+										</button>
+									</div>
+								</div>
+							</div>
+						</form>
+						<table class="table table-bordered">
+							<tbody>
+								<tr>
+									<th style="width: 10px">ID</th>
+									<th>Product Name</th>
+									<th>Price</th>
+									<th>Color</th>
+									<th>Image</th>
+									<th>Category</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+								<tr th:each="product : ${list}">
+									<td th:text="${product.id}"></td>
+									<td th:text="${product.productName}"></td>
+									<td><span
+										th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}">10.00</span>
+									</td>
+									<td th:text="${product.color}"></td>
+									<td><img th:src="@{'/uploads/'+${product.image}}"
+										width="150px" alt="User Image"></td>
+									<td th:text="${product.category?.categoryName}"></td>
+									<td th:text="${product.isActive}"></td>
+									<td><a
+										th:href="@{/admin/product-edit/{id}(id=${product.id})}"
+										class="btn btn-success">EDIT</a> <a
+										th:href="@{/admin/hidden/{id}(id=${product.id})}"
+										onclick="return confirm('Bạn chắc chắn muốn ẩn sản phẩm khỏi trang bán hàng!')"
+										class="btn btn-danger">Ẩn sản phẩm</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="box-footer clearfix">
+						<ul class="pagination pagination-sm no-margin pull-right">
+							<li th:if="${currentPageP > 1}"><a th:href="@{'?pageNo='+${currentPageP-1}}">«</a>
+							</li>							
+							<li th:each="i:${#numbers.sequence(1,totalPageP)}" th:classappend="${currentPageP == i ? 'active' : ''}">
+							<a th:href="@{${keywordP != null && keywordP != '' ? '?keywordP='+keywordP+'&':'?'}+'pageNo='+${i}}" th:text="${i}"></a></li>
+							<li th:if="${currentPageP < totalPageP}"><a th:href="@{'?pageNo='+${currentPageP+1}}">»</a></li>
+						</ul>
+					</div>
+				</div>
+			</section>
+			<!-- /.content -->
+		</div>
+
+		<!-- /.content-wrapper -->
+		<div th:replace="admin/fragments/footer :: footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- jQuery 3 -->
+	<div th:replace="admin/fragments/script :: script"></div>
+</body>
+</html>

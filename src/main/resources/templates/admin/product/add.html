@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="admin/fragments/head :: head">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+	<!-- Site wrapper -->
+	<div class="wrapper">
+		<div th:replace="admin/fragments/header :: header"></div>
+		<!-- Left side column. contains the sidebar -->
+		<div th:replace="admin/fragments/sidebar :: sidebar"></div>
+		<!-- =============================================== -->
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Main content -->
+			<div class="container">
+    		<div class="row">
+			<div class="col-md-6">
+				<section class="content">
+					<div class="box box-primary">
+						<form role="form" method="post" th:action="@{/admin/product-add}"
+							th:object="${product}" enctype="multipart/form-data">
+							<div class="box-body">
+								<!-- Product Name -->
+								<div class="form-group">
+									<label for="productName">Product Name</label> <input
+										type="text" class="form-control" id="productName"
+										th:field="*{productName}" placeholder="Enter product name">
+								</div>
+
+								<!-- Price -->
+								<div class="form-group">
+									<label for="price">Price</label> <input type="text"
+										class="form-control" id="price" th:field="*{price}"
+										placeholder="Enter price">
+								</div>
+								<div class="form-group">
+									<label for="color">Color</label> <input type="text"
+										class="form-control" id="color" th:field="*{color}"
+										placeholder="Enter color">
+								</div>
+								<!-- Image -->
+								<div class="form-group">
+									<label for="fileImage">Image</label> <input type="file"
+										class="form-control" id="fileImage" name="fileImage">
+								</div>
+
+								<!-- Category -->
+								<div class="form-group" data-select2-id="13">
+									<label for="category">Category</label> <select
+										class="form-control select2 select2-hidden-accessible"
+										id="category" th:field="*{category.id}" style="width: 100%;">
+										<option th:each="category : ${listCate}"
+											th:value="${category.id}" th:text="${category.categoryName}"></option>
+									</select>
+								</div>
+								<!-- Product Sizes -->
+								<div class="form-group">
+								    <label for="sizes">Sizes: </label>
+								    <div th:each="size : ${sizes}" style="display: inline-block; margin-right: 15px;">
+								        <div class="checkbox">
+								            <label>
+								                <input type="checkbox" name="sizes" th:value="${size.id}">
+								                <span th:text="${size.name}"></span> <!-- Hiển thị tên kích thước -->
+								            </label>
+								        </div>
+								    </div>
+								</div>
+
+								<!-- Product Content -->
+								<div class="form-group">
+									<label for="content">Content</label> <input type="text"
+										class="form-control" id="content" th:field="*{content}"
+										placeholder="Enter content">
+								</div>
+								<!-- Description -->
+								<div class="form-group">
+									<label for="editor1">Description</label>
+									<textarea name="editor1" id="editor1" rows="10" cols="80"
+										th:field="*{description}">
+						                Thêm thông tin sản phẩm.
+						            </textarea>
+								</div>
+							</div>
+							<!-- Submit Button -->
+							<div class="box-footer">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</form>
+					</div>
+				</section>
+			</div>
+			</div>
+			</div>
+			<!-- /.content -->
+		</div>
+
+		<!-- /.content-wrapper -->
+		<div th:replace="~{admin/fragments/footer :: footer}"></div>
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- jQuery 3 -->
+	<div th:replace="admin/fragments/script :: script"></div>
+	<script th:src="@{//cdn.ckeditor.com/4.22.1/standard/ckeditor.js}"></script>
+	<script>
+		CKEDITOR.replace('editor1', {
+			width : '100%',
+			height : '150px' // Bạn có thể điều chỉnh chiều cao ở đây
+		});
+	</script>
+</body>
+</html>

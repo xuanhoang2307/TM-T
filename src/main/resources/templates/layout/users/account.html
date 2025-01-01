@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/fragments/head :: head">
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="page-wrapper">
+		<header th:replace="layout/fragments/header :: header"></header>
+		<main class="main">
+        	<div class="page-header text-center" style="background-image: url('/fontend/images/page-header-bg.jpg')">
+        		<div class="container">
+        			<h1 class="page-title">My Profile</h1>
+        		</div><!-- End .container -->
+        	</div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/home/products}">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">My Profile</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+            	<div class="dashboard">
+	                <div class="container">
+	                	<div class="row">
+	                		<div th:replace="layout/fragments/sidebar :: sidebar"></div>
+				
+	                		<div class="col-md-8 col-lg-9">
+	                			<div class="tab-content">
+	                					<div th:if="${message}" class="alert alert-danger">
+			                                <span th:text="${message}"></span>
+			                            </div>
+								    	<form th:action="@{/home/account/change-password}" method="POST">
+			                				<div class="row">
+			                					<div class="col-sm-6">
+			                						<label>User Name *</label>
+			                						<input type="text" class="form-control" th:value="${user.userName}" readonly>
+			                					</div><!-- End .col-sm-6 -->
+			                				</div><!-- End .row -->
+		            						
+		            						<label>Current password (leave blank to leave unchanged)</label>
+		            						<input type="password" name="currentPassword" class="form-control" autocomplete="new-password" required>
+
+		            						<label>New password (leave blank to leave unchanged)</label>
+		            						<input type="password" name="newPassword" class="form-control" required>
+
+		            						<label>Confirm new password</label>
+		            						<input type="password" name="confirmPassword" class="form-control mb-2" required>
+
+		                					<button type="submit" class="btn btn-outline-primary-2">
+			                					<span>SAVE CHANGES</span>
+			            						<i class="icon-long-arrow-right"></i>
+			                				</button>
+			                				
+			                			</form>
+			                			<div th:if="${error}" class="alert alert-danger">
+			                                <span th:text="${error}"></span>
+			                            </div>
+								</div>
+	                		</div><!-- End .col-lg-9 -->
+	                	</div><!-- End .row -->
+	                </div><!-- End .container -->
+                </div><!-- End .dashboard -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->	
+        <div th:replace="layout/fragments/footer :: footer"></div>	
+	</div>
+	<div th:replace="layout/fragments/script :: script"></div>
+</body>
+</html>

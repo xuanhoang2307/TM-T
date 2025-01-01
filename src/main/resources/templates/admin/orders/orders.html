@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/head :: head">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Management</title>
+<!-- AdminLTE CSS -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+<!-- FontAwesome -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- Bootstrap -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+	<div class="wrapper">
+
+		<div th:replace="~{admin/fragments/header :: header}"></div>
+
+		<!-- Left side column. contains the sidebar -->
+		<div th:replace="admin/fragments/sidebar :: sidebar"></div>
+		<!-- =============================================== -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0">Order Management</h1>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<!-- Search Bar -->
+					<div class="card">
+						<div class="card-header">
+							<h3 class="card-title">Order List</h3>
+							<div class="card-tools">
+								<form method="GET" action="/admin/orders">
+									<div class="box-tools">
+										<div class="input-group input-group-sm hidden-xs"
+											style="width: 200px;">
+											<input type="text" name="id" id="orderId"
+												class="form-control pull-right"
+												placeholder="Nhập mã đơn hàng" th:value="${id}">
+											<div class="input-group-btn">
+												<button type="submit" class="btn btn-default">
+													<i class="fa fa-search"></i>
+												</button>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- /.card-header -->
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">Lọc đơn hàng theo ngày</h3>
+							</div>
+							<div class="card-body">
+								<form method="GET" action="/admin/orders">
+									<div class="row">
+										<!-- Ngày bắt đầu -->
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="startDate">Từ ngày</label> <input type="date"
+													id="startDate" name="startDate" class="form-control">
+											</div>
+											<div class="form-group">
+												<label for="endDate">Đến ngày</label> <input type="date"
+													id="endDate" name="endDate" class="form-control">
+											</div>
+										</div>
+										<div class="col-md-4">
+											<label for="status">Trạng thái</label> <select
+												name="orderStatus" id="orderStatus" class="form-control">
+												<option value="">Tất cả</option>
+												<option value="Đang chờ"
+													th:selected="${orderStatus == 'Đang chờ'}">Đang
+													chờ</option>
+												<option value="Đang xử lý"
+													th:selected="${orderStatus == 'Đang xử lý'}">Đang
+													xử lý</option>
+												<option value="Đang giao hàng"
+													th:selected="${orderStatus == 'Đang giao hàng'}">Đang
+													giao hàng</option>
+												<option value="Đã nhận"
+													th:selected="${orderStatus == 'Đã nhận'}">Đã nhận</option>
+												<option value="Đã hủy"
+													th:selected="${orderStatus == 'Đã hủy'}">Đã hủy</option>
+											</select>
+										</div>
+										<!-- Nút lọc -->
+										<div class="col-md-4 d-flex align-items-end">
+											<button type="submit" class="btn btn-primary">Lọc</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<div class="card-body table-responsive p-0">
+							<table class="table table-hover text-nowrap">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>User</th>
+										<th>Total Discounted Price</th>
+										<th>Status</th>
+										<th>Date</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- Demo data -->
+									<tr th:each="order : ${orders}">
+										<td th:text="${order.id}"></td>
+										<td th:text="${order.user.userName}"></td>
+										<td th:text="${order.totalDiscountedPrice}"></td>
+										<td th:text="${order.orderStatus}"></td>
+										<td th:text="${order.orderDate}"></td>
+										<td><a
+											th:href="@{/admin/orderitems/{id}(id=${order.id})}">Xem
+												chi tiết</a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<!-- /.card-body -->
+						<div >
+							<ul class="pagination pagination-sm no-margin pull-right">
+								<li class="page-item" th:if="${currentPage > 0}"><a
+									class="page-link"
+									th:href="@{/admin/orders(page=${currentPage - 1}, id=${id})}">«</a>
+								</li>
+								<li class="page-item"
+									th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+									th:classappend="${i == currentPage ? ' active' : ''}"><a
+									class="page-link"
+									th:href="@{/admin/orders(page=${i}, id=${id})}"
+									th:text="${i + 1}"></a></li>
+								<li class="page-item" th:if="${currentPage < totalPages - 1}">
+									<a class="page-link"
+									th:href="@{/admin/orders(page=${currentPage + 1}, id=${id})}">»</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<!-- /.card -->
+				</div>
+			</section>
+			<!-- /.content -->
+		</div>
+	</div>
+	<div th:replace="admin/fragments/script :: script"></div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- Thêm jQuery UI -->
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+</body>
+</html>

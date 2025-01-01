@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title></title>
+<meta name="keywords" content="HTML5 Template">
+<meta name="description" content="Molla - Bootstrap eCommerce Template">
+<meta name="author" content="p-themes">
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="180x180"
+	th:href="@{/fontend/images/icons/apple-touch-icon.png}">
+<link rel="icon" type="image/png" sizes="32x32"
+	th:href="@{/fontend/images/icons/favicon-32x32.png}">
+<link rel="icon" type="image/png" sizes="16x16"
+	th:href="@{/fontend/images/icons/favicon-16x16.png}">
+<link rel="manifest" th:href="@{/fontend/images/icons/site.html}">
+<link rel="mask-icon"
+	th:href="@{/fontend/images/icons/safari-pinned-tab.svg}"
+	color="#666666">
+<link rel="shortcut icon" th:href="@{/fontend/images/icons/favicon.ico}">
+<meta name="apple-mobile-web-app-title" content="Molla">
+<meta name="application-name" content="Molla">
+<meta name="msapplication-TileColor" content="#cc9966">
+<meta name="msapplication-config"
+	content="fontend/images/icons/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet"
+	th:href="@{/fontend/css/plugins/nouislider/nouislider.css}">
+<link rel="stylesheet" th:href="@{/fontend/css/bootstrap.min.css}">
+<!-- Main CSS File -->
+<link rel="stylesheet" th:href="@{/fontend/css/style.css}">
+<link rel="stylesheet"
+	th:href="@{/fontend/css/plugins/owl-carousel/owl.carousel.css}">
+<link rel="stylesheet"
+	th:href="@{/fontend/css/plugins/magnific-popup/magnific-popup.css}">
+</head>
+<style>
+.btn-wishlist.active {
+	color: red;
+}
+
+.btn-wishlist .icon-heart {
+	font-size: 20px;
+	transition: color 0.3s ease;
+}
+</style>
+<body>
+	<div class="page-wrapper">
+		<header th:replace="layout/fragments/header :: header"></header>
+		<main class="main">
+			<nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+				<div class="container">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+						<li class="breadcrumb-item"><a th:href="@{/home/products}">Product
+								List</a></li>
+
+					</ol>
+				</div>
+				<!-- End .container -->
+			</nav>
+			<!-- End .breadcrumb-nav -->
+
+			<div class="page-content">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-9">
+							<div class="products mb-3">
+								<div th:each="product : ${lists}" class="product product-list">
+									<div class="row">
+										<div class="col-6 col-lg-3">
+											<figure class="product-media">
+												<a th:href="@{'/home/products/' + ${product.id}}"> <img
+													th:src="@{'/uploads/'+${product.image}}"
+													alt="Product image" class="product-image">
+												</a>
+											</figure>
+											<!-- End .product-media -->
+										</div>
+										<!-- End .col-sm-6 col-lg-3 -->
+										<div class="col-6 col-lg-3 order-lg-last">
+											<div class="product-list-action">
+												<div class="product-price">
+													<span th:text="${product.price} + '  Nghìn VND'"></span>
+												</div>
+												<!-- End .product-price -->
+												<div class="ratings-container">
+													<div class="ratings">
+														<div class="ratings-val"
+															th:style="'width: ' + (${product.averageRating} * 20) + '%;'"></div>
+													</div>
+													<!-- End .ratings -->
+												</div>
+												<!-- End .rating-container -->
+											</div>
+											<!-- End .product-list-action -->
+										</div>
+										<!-- End .col-sm-6 col-lg-3 -->
+
+										<div class="col-lg-6">
+											<div class="product-body product-action-inner">
+
+												<h3 class="product-title">
+													<a th:href="@{'/home/products/' + ${product.id}}"
+														th:text="${product.productName}"></a>
+												</h3>
+												<!-- End .product-title -->
+
+											</div>
+											<!-- End .product-body -->
+										</div>
+										<!-- End .col-lg-6 -->
+									</div>
+									<!-- End .row -->
+								</div>
+								<!-- End .product -->
+							</div>
+							<!-- End .products -->
+
+							<nav aria-label="Page navigation">
+								<ul class="pagination">
+									<li th:if="${currentPageP > 1}" class="page-item"><a
+										th:href="@{'?pageNo='+${currentPageP-1}}"
+										class="page-link page-link-prev"> <span aria-hidden="true"><i
+												class="icon-long-arrow-left"></i></span>Prev
+									</a></li>
+									<li th:each="i : ${#numbers.sequence(1,totalPageP)}"
+										th:classappend="${currentPageP == i ? 'active' : ''}"
+										class="page-item"><a
+										th:href="@{${keywordP != null && keywordP != '' ? '?keywordP=' + keywordP + '&' : '?'} + 'pageNo=' + ${i}}"
+										th:text="${i}" class="page-link"> </a></li>
+									<li th:if="${currentPageP < totalPageP}" class="page-item">
+										<a th:href="@{'?pageNo='+${currentPageP+1}}"
+										class="page-link page-link-next" aria-label="Next"> Next <span
+											aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+									</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+						<!-- End .col-lg-9 -->
+						<aside class="col-lg-3 order-lg-first">
+							<div class="sidebar sidebar-shop">
+								<div class="widget widget-clean">
+									<label>Filters:</label> <a th:href="@{/home/products}">Clean
+										All</a>
+								</div>
+								<!-- End .widget widget-clean -->
+								<form id="filterForm" method="get" th:action="@{/home/products}">
+									<!-- Thêm các input ẩn cho minPrice và maxPrice -->
+													<input type="hidden" id="minPrice" name="minPrice" /> <input
+														type="hidden" id="maxPrice" name="maxPrice" />
+									<div class="widget widget-collapsible">
+										<h3 class="widget-title">
+											<a data-toggle="collapse" href="#widget-1" role="button"
+												aria-expanded="true" aria-controls="widget-1">Thể loại</a>
+										</h3>
+										<!-- End .widget-title -->
+
+										<div class="collapse show" id="widget-1">
+											<div class="widget-body">
+												<div class="filter-items filter-items-count">
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="category" value="Váy" id="cat-1"> <label
+																class="custom-control-label" for="cat-1">Váy</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="category" value="Áo phông" id="cat-2"> <label
+																class="custom-control-label" for="cat-2">Áo
+																phông</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="category" value="Quần âu" id="cat-3"> <label
+																class="custom-control-label" for="cat-3">Quần âu</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="category" value="Quần bò" id="cat-3"> <label
+																class="custom-control-label" for="cat-3">Quần bò</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="category" value="Áo khoác" id="cat-4"> <label
+																class="custom-control-label" for="cat-4">Áo
+																khoác</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="category" value="Áo hoodie" id="cat-6"> <label
+																class="custom-control-label" for="cat-6">Hoodie</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="category" value="Đầm" id="cat-7"> <label
+																class="custom-control-label" for="cat-7">Đầm</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="category" value="Quần short" id="cat-8"> <label
+																class="custom-control-label" for="cat-8">Quần
+																short</label>
+														</div>
+													</div>
+												</div>
+
+											</div>
+											<!-- End .widget-body -->
+										</div>
+										<!-- End category -->
+									</div>
+									<!-- End category -->
+
+									<div class="widget widget-collapsible">
+										<h3 class="widget-title">
+											<a data-toggle="collapse" href="#widget-3" role="button"
+												aria-expanded="true" aria-controls="widget-3"> Colors </a>
+										</h3>
+										<!-- End .widget-title -->
+										<div class="collapse show" id="widget-3">
+											<div class="widget-body">
+												<div class="filter-items filter-items-count">
+
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="color" value="Đỏ" id="color-red"> <label
+																class="custom-control-label" for="color-red">Đỏ</label>
+
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="color" value="Xanh" id="color-blue"> <label
+																class="custom-control-label" for="color-blue">Xanh</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="color" value="Vàng" id="color-yellow"> <label
+																class="custom-control-label" for="color-yellow">Vàng</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="color" value="Trắng" id="color-white"> <label
+																class="custom-control-label" for="color-white">Trắng</label>
+														</div>
+													</div>
+													<div class="filter-item">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input"
+																name="color" value="Đen" id="color-black"> <label
+																class="custom-control-label" for="color-black">Đen</label>
+														</div>
+													</div>
+												</div>
+												<!-- End .filter-colors -->
+											</div>
+											<!-- End .widget-body -->
+										</div>
+										<!-- End .collapse -->
+									</div>
+									<!-- End color -->
+
+									<div class="widget widget-collapsible">
+										<h3 class="widget-title">
+											<a data-toggle="collapse" href="#widget-5" role="button"
+												aria-expanded="true" aria-controls="widget-5"> Price</a>
+										</h3>
+										<!-- End .widget-title -->
+										<div class="collapse show" id="widget-5">
+											<div class="widget-body">
+												<div class="filter-price">
+													<div class="filter-price-text">
+														<span id="filter-price-range"></span>
+													</div>
+													<!-- End .filter-price-text -->
+													<div id="price-slider"></div>
+													
+													<!-- End #price-slider -->
+												</div>
+												<!-- End .filter-price -->
+											</div>
+											<!-- End .widget-body -->
+										</div>
+										<!-- End .collapse -->
+									</div>
+									<!-- End .widget -->
+									<button type="submit" id="filter-button"
+										class="btn btn-primary">Lọc</button>
+								</form>
+							</div>
+							<!-- End .sidebar sidebar-shop -->
+						</aside>
+						<!-- End .col-lg-3 -->
+					</div>
+					<!-- End .row -->
+				</div>
+				<!-- End .container -->
+			</div>
+			<!-- End .page-content -->
+		</main>
+		<!-- End .main -->
+
+		<div th:replace="layout/fragments/footer :: footer"></div>
+	</div>
+	<!-- End .page-wrapper -->
+	<button id="scroll-top" title="Back to Top">
+		<i class="icon-arrow-up"></i>
+	</button>
+	<div th:replace="layout/fragments/script :: script"></div>
+<script >
+//Giả sử bạn có một thanh trượt như sau
+var slider = document.getElementById('price-slider');
+    // Cập nhật giá trị min và max khi thay đổi slider
+    slider.noUiSlider.on('update', function(values, handle) {
+        var minPrice = values[0];
+        var maxPrice = values[1];
+
+        document.getElementById('minPrice').value = minPrice;
+        document.getElementById('maxPrice').value = maxPrice;
+        document.getElementById('filter-price-range').textContent = minPrice + ' - ' + maxPrice;
+    });
+
+    document.getElementById('filter-button').addEventListener('click', function() {
+        // Khi bấm nút Apply Filters, form sẽ gửi đi cùng với giá trị minPrice và maxPrice
+        document.getElementById('filterForm').submit();
+    });
+
+</script>
+</body>
+</html>
+
+

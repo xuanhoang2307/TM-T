@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="admin/fragments/head :: head">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+	<div class="wrapper">
+		<div th:replace="admin/fragments/header :: header"></div>
+		<!-- Left side column. contains the sidebar -->
+		<div th:replace="admin/fragments/sidebar :: sidebar"></div>
+		<!-- =============================================== -->
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+
+			<!-- Main content -->
+			<div class="col-md-6">
+				<section class="content">
+					<div class="box box-primary">
+						<form role="form" th:action="@{/admin/add-size}" method="post" th:object="${size}">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Size Name</label> 
+									<input type="text" class="form-control" id="exampleInputEmail1" th:field="*{name}">
+							</div>
+							<button type="submit" class="btn btn-primary">Add Size</button>
+						</form>
+
+
+					</div>
+				</section>
+
+			</div>
+			<!-- /.content -->
+		</div>
+
+		<!-- /.content-wrapper -->
+		<div th:replace="~{admin/fragments/footer :: footer}"></div>
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- jQuery 3 -->
+	<div th:replace="admin/fragments/script :: script"></div>
+</body>
+</html>

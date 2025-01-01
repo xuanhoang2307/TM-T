@@ -2,6 +2,8 @@ package huce.edu.web.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import huce.edu.web.model.Category;
 
 public interface CategoryService {
@@ -9,6 +11,8 @@ public interface CategoryService {
 	Boolean create(Category category);
 	Category findById(Integer id);
 	Boolean update(Category category);
-	Boolean delete(Integer id);
 	List<Category> searchCategory(String keyword);
+	Page<Category> getAllPage(Integer pageNo);
+	Page<Category> searchCategory(String keyword, Integer pageNo);
+	List<Category> getAllActiveCategories();
 }

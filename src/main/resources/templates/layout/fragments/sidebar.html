@@ -1,0 +1,23 @@
+<aside class="col-md-4 col-lg-3" th:fragment="sidebar">
+	<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+		<li class="nav-item">
+			<a  th:href="@{/home/dashboard}"
+			role="tab" aria-controls="tab-dashboard" aria-selected="true">Dash
+				board</a>
+		</li>
+		<li class="nav-item">
+			<a role="tab" h:href="@{/home/order}"
+			aria-controls="tab-orders" aria-selected="false">Orders</a>
+		</li>
+		<li class="nav-item">
+			<a th:href="@{/home/addresses/{userId}(userId=${user.id})}" role="tab"
+			aria-controls="tab-address" aria-selected="false">Change Address</a>
+		</li>
+		<li class="nav-item">
+			<a role="tab" th:href="@{/home/account}"
+			aria-controls="tab-account" aria-selected="false">Account Details</a>
+		</li>
+		<li class="nav-item"><a class="nav-link" href="#">Sign Out</a></li>
+	</ul>
+</aside>
+<!-- End .col-lg-3 -->
